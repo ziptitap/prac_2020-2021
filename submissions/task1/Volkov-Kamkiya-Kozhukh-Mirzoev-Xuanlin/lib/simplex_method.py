@@ -20,19 +20,26 @@ ____________________________________________________
 
 '''
 
-def checker(simplex_table, deltas):
+def checker(simplex_table, deltas, pl_type):
     '''
     simplex_table = list[list[int, (float, ...)]]: prepared simplex_table
-    deltas = list[float]: special functions for
-    Checks that all deltas are negative to stop the process
+    deltas = list[float]: special functions for optimization
+    pl_type = int: 0 - first player, 1 - second player
+    Checks that all deltas are negative or positive to stop the process
     Returns true if more iterations needed
     '''
     is_any_positive = False
+    is_any_negative = False
+
     for el in deltas:
         if el > 0:
             is_any_positive = True
+        if el < 0:
+            is_any_negative = True
 
-    return is_any_positive
+    if pl_type == 0:
+        return is_any_positive
+    return is_any_negative
 
 
 def prepare_simplex(simplex_table):
@@ -97,9 +104,10 @@ def prepare_simplex(simplex_table):
         simplex_table[indx_row][0] = indx_col
 
 
-def do_simplex(simplex_table):
+def do_simplex(simplex_table, pl_type):
     '''
     simplex_table = list[list[int, (float, ...)]]: prepared simplex_table
+    pl_type = int: 0 - first player, 1 - second player
     Does simplex-method
     '''
     len_table = len(simplex_table)
@@ -113,25 +121,30 @@ def do_simplex(simplex_table):
             delta += simplex_table[0][simplex_table[i][0]] * simplex_table[i][j]
         delta -= simplex_table[0][j]
         deltas.append(delta)
-
-    while checker(simplex_table, deltas):
+    it = 0
+    while checker(simplex_table, deltas, pl_type):
         indx_col = 1
         for i in range(1, len(deltas)):
-            if deltas[i] > deltas[indx_col]:
-                indx_col = i
+            if pl_type == 0:
+                if deltas[i] > deltas[indx_col]:
+                    indx_col = i
+            else:
+                if deltas[i] < deltas[indx_col]:
+                    indx_col = i
 
-        indx_row = 1
-        for i in range(1, len_table):
-            if simplex_table[i][indx_col] != 0:
-                indx_row = i
-        
+        indx_row = -1
         for i in range(1, len_table):
             if simplex_table[i][indx_col] == 0:
                 continue
-            curr_min = simplex_table[indx_row][len_col - 1] / simplex_table[indx_row][indx_col]
+            
             new_min = simplex_table[i][len_col - 1] / simplex_table[i][indx_col]
             if new_min < 0:
                 continue
+            if indx_row == -1:
+                indx_row = i
+                continue
+            
+            curr_min = simplex_table[indx_row][len_col - 1] / simplex_table[indx_row][indx_col]
             if new_min < curr_min:
                 indx_row = i
         
@@ -161,16 +174,20 @@ def do_simplex(simplex_table):
             deltas.append(delta)
 
 
-def run_simplex(lp_matrix):
+def run_simplex(lp_matrix, pl_type):
     '''
     lp_matrix = list[list[float]]: matrix with linear programming task parameters
+    pl_type = int: 0 - first player, 1 - second player
     Creates simplex table and run simplex-method.
     Returns result simplex-table
     '''
     simplex_table = []
     cnt_of_rows = len(lp_matrix) + 1
     offset = 0
-    
+    sgn = -1.0
+    if pl_type:
+        sgn *= sgn
+
     for i in range(cnt_of_rows):
         row = []
         if i == 0:
@@ -183,17 +200,17 @@ def run_simplex(lp_matrix):
         else:
             row.append(len(lp_matrix[0]) + i)
             for j in range(len(lp_matrix[0])):
-                row.append(-lp_matrix[i - 1][j])
+                row.append(sgn * lp_matrix[i - 1][j])
             for j in range(offset):
                 row.append(0.0)
-            row.append(1)
+            row.append(1.0)
             for j in range(len(lp_matrix) - offset - 1):
                 row.append(0.0)
             offset += 1
-            row.append(-1.0)
+            row.append(sgn)
         simplex_table.append(row)
     
     prepare_simplex(simplex_table)
-    do_simplex(simplex_table)
+    do_simplex(simplex_table, pl_type)
     return simplex_table
     

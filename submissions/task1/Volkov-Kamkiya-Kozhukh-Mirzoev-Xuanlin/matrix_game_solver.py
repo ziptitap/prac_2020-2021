@@ -69,22 +69,31 @@ def prepare_matrix(matrix, indexes1, indexes2, n, m, enable_rows_and_columns_eli
     return min_el
 
 
-def get_simplex(matrix, n, m):
+def get_simplex(matrix, n, m, pl_type = 0):
     '''
     matrix = list[list[float]]: modified matrix of game
     n = int: count of rows
     m = int: count of columns
+    pl_type = int: 0 - first player, 1 - second player
     Cast modified matrix of game to linear programming task and run simplex-method.
     Returns result simplex-table
     '''
     lp_matrix = []
-    for i in range(m):
-        row = []
-        for j in range(n):
-            row.append(matrix[j][i])
-        lp_matrix.append(row)
+
+    if pl_type == 0:
+        for i in range(m):
+            row = []
+            for j in range(n):
+                row.append(matrix[j][i])
+            lp_matrix.append(row)
+    else:
+        for i in range(n):
+            row = []
+            for j in range(m):
+                row.append(matrix[i][j])
+            lp_matrix.append(row)
     
-    return lib.simplex_method.run_simplex(lp_matrix)
+    return lib.simplex_method.run_simplex(lp_matrix, pl_type)
 
 
 def main():
@@ -108,14 +117,19 @@ def main():
     n = len(matrix)
     m = len(matrix[0])
 
-    simplex_matrix = get_simplex(matrix, n, m)
+    simplex_matrix1 = get_simplex(matrix, n, m, 0)
+    simplex_matrix2 = get_simplex(matrix, n, m, 1)
     
     target_f = 0
-    target_plan = [0] * (len(simplex_matrix[0]) - 2)
-    for i in range(1, len(simplex_matrix)):
-        curr_value = simplex_matrix[i][len(simplex_matrix[i]) - 1]
-        target_plan[simplex_matrix[i][0] - 1] = curr_value
-        target_f += curr_value * simplex_matrix[0][simplex_matrix[i][0]]
+    target_plan1 = [0] * (len(simplex_matrix1[0]) - 2)
+    target_plan2 = [0] * (len(simplex_matrix2[0]) - 2)
+    for i in range(1, len(simplex_matrix1)):
+        curr_value = simplex_matrix1[i][len(simplex_matrix1[i]) - 1]
+        target_plan1[simplex_matrix1[i][0] - 1] = curr_value
+        target_f += curr_value * simplex_matrix1[0][simplex_matrix1[i][0]]
+
+        curr_value = simplex_matrix2[i][len(simplex_matrix2[i]) - 1]
+        target_plan2[simplex_matrix2[i][0] - 1] = curr_value
     
     V = 1/target_f
     print("Target F = {}".format(target_f))
@@ -130,10 +144,19 @@ def main():
     it = 0
     for i in range(len(source_matrix)):
         if i == indexes1[it]:
-            first_player_tactics.append(target_plan[it] * V)
+            first_player_tactics.append(target_plan1[it] * V)
             it += 1
         else:
             first_player_tactics.append(0)
     
-    print("First player tactics: {}".format(first_player_tactics))
+    second_player_tactics = []
+    it = 0
+    for i in range(len(source_matrix)):
+        if i == indexes2[it]:
+            second_player_tactics.append(target_plan2[it] * V)
+            it += 1
+        else:
+            second_player_tactics.append(0)
     
+    print("First player tactics: {}".format(first_player_tactics))
+    print("Second player tactics: {}".format(second_player_tactics))    
