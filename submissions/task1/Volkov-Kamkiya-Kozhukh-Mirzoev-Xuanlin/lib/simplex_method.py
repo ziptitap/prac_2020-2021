@@ -121,7 +121,7 @@ def do_simplex(simplex_table, pl_type):
             delta += simplex_table[0][simplex_table[i][0]] * simplex_table[i][j]
         delta -= simplex_table[0][j]
         deltas.append(delta)
-    it = 0
+    
     while checker(simplex_table, deltas, pl_type):
         indx_col = 1
         for i in range(1, len(deltas)):
