@@ -2,7 +2,7 @@ import sys
 
 import lib.simplex_method
 import utils.matrix_stuff
-
+import matplotlib.pyplot as plotter
 
 def source_input():
     ''' 
@@ -68,6 +68,13 @@ def prepare_matrix(matrix, indexes1, indexes2, n, m, enable_rows_and_columns_eli
 
     return min_el
 
+def plot (player1, player2):
+    fig = plotter.figure(figsize=(10, 10))
+    fig.title("Vector of optimal strategies")
+    ax1 = fig.add_subplot(211)
+    ax2 = fig.add_subplot(212)
+    ax1.stem(range(1, len(player1) + 1), player1)
+    ax2.stem(range(1, len(player2) + 1), player2)
 
 def get_simplex(matrix, n, m, pl_type = 0):
     '''
@@ -96,21 +103,15 @@ def get_simplex(matrix, n, m, pl_type = 0):
     return lib.simplex_method.run_simplex(lp_matrix, pl_type)
 
 
-def main():
+def test(source_n, source_m, source_matrix):
     ''' 
     main function
     '''
-    source_n, source_m, source_matrix = source_input()
     matrix = source_matrix.copy()
     n, m = source_n, source_m
     
-    indexes1 = []
-    for i in range(n):
-        indexes1.append(i)
-    
-    indexes2 = []
-    for i in range(m):
-        indexes2.append(i)
+    indexes1 = list(range(n))
+    indexes2 = list(range(m))
     
     min_el = prepare_matrix(matrix, indexes1, indexes2, n, m, 1)
     
@@ -131,12 +132,12 @@ def main():
         curr_value = simplex_matrix2[i][len(simplex_matrix2[i]) - 1]
         target_plan2[simplex_matrix2[i][0] - 1] = curr_value
     
-    V = 1/target_f
+    V = 1 / target_f
     print("Target F = {}".format(target_f))
     print("Then V = {}".format(V))
     
     if min_el != 0:
-        V = 1/target_f - min_el
+        V = 1 / target_f - min_el
         print("Source matrix was modified by adding min_el = {}".format(min_el))
         print("V = V' - min_el = {}".format(V))
     
@@ -159,4 +160,25 @@ def main():
             second_player_tactics.append(0)
     
     print("First player tactics: {}".format(first_player_tactics))
-    print("Second player tactics: {}".format(second_player_tactics))    
+    print("Second player tactics: {}".format(second_player_tactics)) 
+
+    #plot(first_player_tactics, second_player_tactics)   
+
+def main():
+    source_n, source_m, source_matrix = source_input()
+    print(source_n, source_m, source_matrix)
+    test(source_n, source_m, source_matrix)
+
+    source_n = 6
+    source_m = 6
+    source_matrix = [[4, 0, 6, 2, 2, 1],
+                    [3, 8, 4, 10, 4, 4],
+                    [1, 2, 6, 5, 0, 0],
+                    [6, 6, 4, 4, 10, 3],
+                    [10, 4, 6, 4, 0, 9],
+                    [10, 7, 0, 7, 9, 8]]
+    matrix = list()
+    for row in source_matrix:
+        matrix.append([float(j) for j in row])
+    print(source_n, source_m, matrix)
+    test(source_n, source_m, matrix)
