@@ -13,9 +13,6 @@ def is_there_any_seddle_point(a) -> tuple:
     maximal_in_col = np.max(a, axis=0)
     min_max = maximal_in_col.min()
     maximal_in_col_idx = np.argmin(maximal_in_col)
-    # found an element which looks like saddle point so we check it
-    #check1 = np.argmax(a[minimal_in_row_idx, :]) == maximal_in_col_idx
-    #check2 = np.argmin(a[:, maximal_in_col_idx]) == minimal_in_row_idx
     if min_max==max_min:
         return (minimal_in_row_idx, maximal_in_col_idx)
     else:
@@ -27,9 +24,9 @@ def is_there_any_seddle_point(a) -> tuple:
 # методом Гаусса обнуляем все остальные элементы ведущего столбца
 def transform_simplex_table(a, row, col):
     leading_elem = a[row][col]
-    for j in range(a.shape[1]): # изменяем строку
+    for j in range(a.shape[1]): 
         a[row][j] /= leading_elem
-    for i in range(a.shape[0]): # ~ метод гаусса
+    for i in range(a.shape[0]): 
         if i == row:
             continue
         mult = a[i][col]
@@ -49,7 +46,7 @@ def find_leading_col(a): # находим ведущий стб в мат - min 
             lowest = a[0][j]
             leading_col = j
     if lowest >= 0:
-        return -1  # выход по положительному lowest
+        return -1  
     return leading_col
 
 
@@ -67,22 +64,22 @@ def find_leading_row(a, leading_col): # находим ведущую стр - �
             min_ratio = ratio
             leading_row = i
     if min_ratio < 0:
-        return -1 # выход по ...
+        return -1 
     return leading_row
 
 
 # функция simplex_table(a) получает на вход матрицу a
 # приписывает справа от исходной матрицы квадратную единичную размерности = кол-ву строк a
-# ghbgbcsdftn справа единичный столбец (разрешающий)
+# приписывает справа единичный столбец (разрешающий)
 # приписывает сверху строку из 0 и -1 (над исходными столбцами a)
 def simplex_table(a):      
-    I = np.vstack(( np.zeros(a.shape[0]), np.eye(a.shape[0]) ))  # создаем стек - двумерный массив из нулевого одномерного массива длинной-кол-во стб, и двумерного массива - единичная матрица размера кол-во_стр*кол-во_стр
-    b = np.array([1, ] * (a.shape[0] + 1)).reshape(a.shape[0] + 1, -1) # создаем двумерный массив - стб из 1
+    I = np.vstack(( np.zeros(a.shape[0]), np.eye(a.shape[0]) )) 
+    b = np.array([1, ] * (a.shape[0] + 1)).reshape(a.shape[0] + 1, -1) 
     b[0][0] = 0
-    c = np.array([-1, ] * a.shape[1]) # создаем одномерный массив-строку из -1
-    a = np.vstack((c, a)) # соединяем два массива - приписываем строку с в начало массива а (добавляем строку в двумерный массив)
-    a = np.hstack((b, a)) # соединияем 2 массива b в начало а
-    a = np.hstack((a, I)) # соединяем 2 массива к а приписываем I
+    c = np.array([-1, ] * a.shape[1]) 
+    a = np.vstack((c, a)) 
+    a = np.hstack((b, a))
+    a = np.hstack((a, I)) 
     return a
 
 
@@ -118,7 +115,6 @@ def find_basis_variable(a, col):
 def optimal_strategy(a, b):
     p = []
     q = []
-  #  print ('       ',a.shape)
     for j in range(1, a.shape[1]):
         xi = find_basis_variable(a, j)
         if xi != -1:
@@ -131,8 +127,6 @@ def optimal_strategy(a, b):
                 q.append(0)
             else:
                 p.append(a[0][j])
-  #  print (q)
-   # print (p)
     sum1 = sum(q)
     sum2 = sum(p)
     for i in range(len(q)):
@@ -155,7 +149,6 @@ def optimal_strategy(a, b):
 def nash_equilibrium(a):
     loop = 1
     seddle_point = is_there_any_seddle_point(a)
-    print (seddle_point)
     if (seddle_point != (None, None)):
         s = a[seddle_point[0]][seddle_point[1]]
         p = np.array([0 for i in range (a.shape[0]) ])
@@ -163,19 +156,19 @@ def nash_equilibrium(a):
         q = np.array ([0 for i in range (a.shape [1])])
         q[seddle_point[1]] = 1
         return p,q,s 
-   # delete_dominant_strat (a)
+    
     min_val = a.min() 
     b = 0
-    if min_val <= 0: # избавляемся от отрицательных элементов матрицы
+    if min_val <= 0: 
         b = -min_val+1   
         a = a + b
     a = simplex_table(a) 
-    print ("матрица для симплекс метода:")
-    print_float_mat (a)
+#    print ("матрица для симплекс метода:")
+#    print_float_mat (a)
     check_b_positive(a) 
     while loop:
         leading_col = find_leading_col(a)
-        if leading_col < 0: # положительность 0 стр
+        if leading_col < 0: 
             p, q, s = optimal_strategy(a, b)
             return p, q, s
         leading_row = find_leading_row(a, leading_col)
@@ -183,17 +176,17 @@ def nash_equilibrium(a):
             print('no leading row')
             break
         transform_simplex_table (a, leading_row, leading_col)
-        print ("преобразованная матрица ", loop)
-        print_float_mat (a)
+     #   print ("преобразованная матрица ", loop)
+     #   print_float_mat (a)
         if loop > 40:
             print('Too many iterations')
             break
         loop += 1
 
         
-# визуализация вектора      
+# визуализация вектора (Соф, надеюсь ты +- понимаешь, что тут происходит)     
 def visualization(p):
-	plt.title("Визуализация вектора оптимальной стратегии")
+    plt.title("Визуализация вектора оптимальной стратегии")
     x = np.linspace(1, len(p), len(p) )  
     plt.axis([0, len(p) + 1, 0, max(p) + 1/2]) 
     plt.style.use('ggplot')
@@ -207,16 +200,16 @@ def visualization(p):
 # выводим значение игры и отпимальные стратегии
 def main(a = None):
     if a is None:
-        m = int(input()) # stroki
-        n = int(input()) # stb
+        m = int(input())
+        n = int(input()) 
         a = []
         for i in range(m):
             s = ([float (j) for j in input().split()]) # читаем построчно числa с разделением в " " и создаем одномерный массив - строку
             while (len(s) != n):
                 print ("Error in input! Try again: amount of colomns if", n)
                 s = ([float (j) for j in input().split()])
-            a.append(s) # соединяем строки в двумерный массив
-        a = np.array(a) # формируем 1 массив для использования библиотеки numpy
+            a.append(s) 
+        a = np.array(a) 
     p, q, s = nash_equilibrium(a)
     visualization(p)
     visualization(q)
@@ -240,3 +233,8 @@ def print_float_vector (v):
     for i in range(len(v)):
         print ("%.2f" % (v[i]), end = '  ')
     print (']')
+
+if __name__ == "__main__":
+    main() 
+
+
