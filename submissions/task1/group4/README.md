@@ -1,1 +1,6 @@
-Let's make group4 great again!
+Запуск: в Anaconda с помощью jupyter notebook запустить файл nash_IO.ipynb и посмотреть работу программы
+Распаковать zip-файл и в Anaconda с помощью jupyter notebook запустить файл nash_IO.ipynb и посмотреть работу программы, которая собрана с помощью пакета pack, в котором находятся файлы с реализацией вспомогательных функций
+Открыть консоль и перейти в папку с проектом.
+написать команду python nash_IO.py
+unit-тесты находятся в ноутбуке nash_IO.ipynb
+тесты с помощью Nose: nosetests test_um_nash_eq.py
