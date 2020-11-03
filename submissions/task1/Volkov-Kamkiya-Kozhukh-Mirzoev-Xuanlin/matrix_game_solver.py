@@ -68,7 +68,7 @@ def prepare_matrix(matrix, indexes1, indexes2, n, m, enable_rows_and_columns_eli
 
     return min_el
 
-def plot (player1, player2):
+def plot(player1, player2):
     fig = plotter.figure(figsize=(10, 10))
     fig.title("Vector of optimal strategies")
     ax1 = fig.add_subplot(211)
@@ -162,23 +162,9 @@ def test(source_n, source_m, source_matrix):
     print("First player tactics: {}".format(first_player_tactics))
     print("Second player tactics: {}".format(second_player_tactics)) 
 
-    #plot(first_player_tactics, second_player_tactics)   
+    plot(first_player_tactics, second_player_tactics)   
 
 def main():
     source_n, source_m, source_matrix = source_input()
     print(source_n, source_m, source_matrix)
     test(source_n, source_m, source_matrix)
-
-    source_n = 6
-    source_m = 6
-    source_matrix = [[4, 0, 6, 2, 2, 1],
-                    [3, 8, 4, 10, 4, 4],
-                    [1, 2, 6, 5, 0, 0],
-                    [6, 6, 4, 4, 10, 3],
-                    [10, 4, 6, 4, 0, 9],
-                    [10, 7, 0, 7, 9, 8]]
-    matrix = list()
-    for row in source_matrix:
-        matrix.append([float(j) for j in row])
-    print(source_n, source_m, matrix)
-    test(source_n, source_m, matrix)
