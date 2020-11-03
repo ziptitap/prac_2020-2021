@@ -52,7 +52,7 @@ def prepare_simplex(simplex_table):
     for i in range(1, len(simplex_table)):
         if simplex_table[i][len(simplex_table[i]) - 1] < 0:
             is_any_negative = True
-    
+
     while is_any_negative:
         is_any_negative = False
         indx_row = -1
@@ -82,10 +82,10 @@ def prepare_simplex(simplex_table):
         for j in non_basis_variables:
             if simplex_table[indx_row][j] < 0:
                 is_any_negative_in_row = True
-            curr_mx = abs(simplex_table[indx_row][indx_col])
-            new_mx = abs(simplex_table[indx_row][j])
-            if new_mx > curr_mx:
-                indx_col = j
+                curr_mx = abs(simplex_table[indx_row][indx_col])
+                new_mx = abs(simplex_table[indx_row][j])
+                if new_mx > curr_mx:
+                    indx_col = j
         if not is_any_negative_in_row:
             print("Unsolvable")
             sys.exit()
@@ -122,6 +122,7 @@ def do_simplex(simplex_table, pl_type):
         delta -= simplex_table[0][j]
         deltas.append(delta)
     
+
     while checker(simplex_table, deltas, pl_type):
         indx_col = 1
         for i in range(1, len(deltas)):
@@ -131,14 +132,16 @@ def do_simplex(simplex_table, pl_type):
             else:
                 if deltas[i] < deltas[indx_col]:
                     indx_col = i
-
+        
         indx_row = -1
         for i in range(1, len_table):
             if simplex_table[i][indx_col] == 0:
                 continue
             
             new_min = simplex_table[i][len_col - 1] / simplex_table[i][indx_col]
-            if new_min < 0:
+            is_zero = simplex_table[i][len_col - 1] == 0
+            is_negative_zero = is_zero and simplex_table[i][indx_col] < 0
+            if new_min < 0 or is_negative_zero:
                 continue
             if indx_row == -1:
                 indx_row = i
@@ -212,5 +215,6 @@ def run_simplex(lp_matrix, pl_type):
     
     prepare_simplex(simplex_table)
     do_simplex(simplex_table, pl_type)
+
     return simplex_table
     
