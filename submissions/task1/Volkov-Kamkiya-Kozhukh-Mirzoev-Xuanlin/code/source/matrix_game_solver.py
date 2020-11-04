@@ -1,7 +1,7 @@
 import sys
 
-import lib.simplex_method
-import utils.matrix_stuff
+import source.lib.simplex_method
+import source.utils.matrix_stuff
 #import matplotlib.pyplot as plotter
 
 def source_input():
@@ -47,7 +47,7 @@ def prepare_matrix(matrix, indexes1, indexes2, n, m, enable_rows_and_columns_eli
     '''
     
     if (enable_rows_and_columns_elimination):
-        utils.matrix_stuff.delete_dominated_n_equal(matrix, indexes1, indexes2, n, m)
+        source.utils.matrix_stuff.delete_dominated_n_equal(matrix, indexes1, indexes2, n, m)
     
     n = len(matrix)
     m = len(matrix[0])
@@ -100,7 +100,7 @@ def get_simplex(matrix, n, m, pl_type = 0):
                 row.append(matrix[i][j])
             lp_matrix.append(row)
     
-    return lib.simplex_method.run_simplex(lp_matrix, pl_type)
+    return source.lib.simplex_method.run_simplex(lp_matrix, pl_type)
 
 
 def nash_equilibrium(source_n, source_m, source_matrix):

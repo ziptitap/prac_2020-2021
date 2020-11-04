@@ -1,6 +1,6 @@
 import pytest
 
-import matrix_game_solver
+import source.matrix_game_solver
 
 
 def is_equal_matrix(matrix_a, matrix_b):
@@ -84,7 +84,7 @@ def test_prepare_matrix(
     matrix, indexes1, indexes2, n, m, enable_rows_and_columns_elimination, 
     ans, res_min_el, indx1, indx2
     ):
-    min_el = matrix_game_solver.prepare_matrix(
+    min_el = source.matrix_game_solver.prepare_matrix(
         matrix, indexes1, indexes2, n, m, enable_rows_and_columns_elimination
     )
     assert matrix == ans
@@ -131,5 +131,5 @@ def test_prepare_matrix(
     ],
 )
 def test_get_simplex(matrix, n, m, pl_type, ans):
-    simplex_table = matrix_game_solver.get_simplex(matrix, n, m, pl_type)
+    simplex_table = source.matrix_game_solver.get_simplex(matrix, n, m, pl_type)
     is_equal_matrix(simplex_table, ans)

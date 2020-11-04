@@ -1,6 +1,6 @@
 import pytest
 
-import lib.simplex_method
+import source.lib.simplex_method
 
 def is_equal_matrix(matrix_a, matrix_b):
     eps = 1e-05
@@ -66,7 +66,7 @@ def is_equal_matrix(matrix_a, matrix_b):
     ],
 )
 def test_checker(simplex_table, deltas, pl_type, ans):
-    res = lib.simplex_method.checker(simplex_table, deltas, pl_type)
+    res = source.lib.simplex_method.checker(simplex_table, deltas, pl_type)
     assert res == ans
 
 @pytest.mark.parametrize(
@@ -104,7 +104,7 @@ def test_checker(simplex_table, deltas, pl_type, ans):
     ],
 )
 def test_prepare_simplex(simplex_table, ans):
-    lib.simplex_method.prepare_simplex(simplex_table)
+    source.lib.simplex_method.prepare_simplex(simplex_table)
     is_equal_matrix(simplex_table, ans)
     
 @pytest.mark.parametrize(
@@ -144,7 +144,7 @@ def test_prepare_simplex(simplex_table, ans):
     ],
 )
 def test_do_simplex(simplex_table, pl_type, ans):
-    lib.simplex_method.do_simplex(simplex_table, pl_type)
+    source.lib.simplex_method.do_simplex(simplex_table, pl_type)
     is_equal_matrix(simplex_table, ans)
 
 @pytest.mark.parametrize(
@@ -182,5 +182,5 @@ def test_do_simplex(simplex_table, pl_type, ans):
     ],
 )
 def test_run_simplex(lp_matrix, pl_type, ans):
-    simplex_table = lib.simplex_method.run_simplex(lp_matrix, pl_type)
+    simplex_table = source.lib.simplex_method.run_simplex(lp_matrix, pl_type)
     is_equal_matrix(simplex_table, ans)
