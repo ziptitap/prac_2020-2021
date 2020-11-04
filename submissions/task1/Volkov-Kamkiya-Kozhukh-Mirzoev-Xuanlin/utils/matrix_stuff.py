@@ -54,7 +54,7 @@ def delete_dominated_n_equal(matrix, indexes1, indexes2, n, m):
                     continue
                 is_dominated = True
                 for k in range(m):
-                    if matrix[i][k] >= matrix[j][k]:
+                    if matrix[i][k] > matrix[j][k]:
                         is_dominated = False
                 if is_dominated:
                     dominated_strategies1.append(i)
@@ -73,7 +73,7 @@ def delete_dominated_n_equal(matrix, indexes1, indexes2, n, m):
                     continue
                 is_dominated = True
                 for k in range(n):
-                    if matrix[k][i] <= matrix[k][j]:
+                    if matrix[k][i] < matrix[k][j]:
                         is_dominated = False
                 if is_dominated:
                     dominated_strategies2.append(i)

@@ -2,7 +2,7 @@ import sys
 
 import lib.simplex_method
 import utils.matrix_stuff
-import matplotlib.pyplot as plotter
+#import matplotlib.pyplot as plotter
 
 def source_input():
     ''' 
@@ -66,15 +66,15 @@ def prepare_matrix(matrix, indexes1, indexes2, n, m, enable_rows_and_columns_eli
             for j in range(m):
                 matrix[i][j] -= min_el
 
-    return min_el
+    return min(min_el, 0)
 
-def plot(player1, player2):
-    fig = plotter.figure(figsize=(10, 10))
-    fig.title("Vector of optimal strategies")
-    ax1 = fig.add_subplot(211)
-    ax2 = fig.add_subplot(212)
-    ax1.stem(range(1, len(player1) + 1), player1)
-    ax2.stem(range(1, len(player2) + 1), player2)
+# def plot(player1, player2):
+#     fig = plotter.figure(figsize=(10, 10))
+#     fig.title("Vector of optimal strategies")
+#     ax1 = fig.add_subplot(211)
+#     ax2 = fig.add_subplot(212)
+#     ax1.stem(range(1, len(player1) + 1), player1)
+#     ax2.stem(range(1, len(player2) + 1), player2)
 
 def get_simplex(matrix, n, m, pl_type = 0):
     '''
@@ -103,7 +103,7 @@ def get_simplex(matrix, n, m, pl_type = 0):
     return lib.simplex_method.run_simplex(lp_matrix, pl_type)
 
 
-def test(source_n, source_m, source_matrix):
+def nash_equilibrium(source_n, source_m, source_matrix):
     ''' 
     main function
     '''
@@ -117,7 +117,7 @@ def test(source_n, source_m, source_matrix):
     
     n = len(matrix)
     m = len(matrix[0])
-
+    
     simplex_matrix1 = get_simplex(matrix, n, m, 0)
     simplex_matrix2 = get_simplex(matrix, n, m, 1)
     
@@ -143,8 +143,9 @@ def test(source_n, source_m, source_matrix):
     
     first_player_tactics = []
     it = 0
-    for i in range(len(source_matrix)):
-        if i == indexes1[it]:
+    
+    for i in range(source_n):
+        if it < len(indexes1) and i == indexes1[it]:
             first_player_tactics.append(target_plan1[it] * V)
             it += 1
         else:
@@ -152,8 +153,9 @@ def test(source_n, source_m, source_matrix):
     
     second_player_tactics = []
     it = 0
-    for i in range(len(source_matrix)):
-        if i == indexes2[it]:
+
+    for i in range(source_m):
+        if it < len(indexes2) and i == indexes2[it]:
             second_player_tactics.append(target_plan2[it] * V)
             it += 1
         else:
@@ -162,9 +164,11 @@ def test(source_n, source_m, source_matrix):
     print("First player tactics: {}".format(first_player_tactics))
     print("Second player tactics: {}".format(second_player_tactics)) 
 
-    plot(first_player_tactics, second_player_tactics)   
+ #   plot(first_player_tactics, second_player_tactics)   
 
 def main():
+    '''
+    launcher
+    '''
     source_n, source_m, source_matrix = source_input()
-    print(source_n, source_m, source_matrix)
-    test(source_n, source_m, source_matrix)
+    nash_equilibrium(source_n, source_m, source_matrix)
